@@ -20,18 +20,93 @@ function App() {
         setInputName(event.target.value);
     };
 
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    const LOLmode = async () => {
+        let newBlueTeam =[...blueTeam]
+        let newRedTeam =[...redTeam];
+        //round one
+        let personRequired = 1 - newBlueTeam.length;
+        for(var i =0; i< personRequired; i++){
+            let person = drawSomeone(newBlueTeam , newRedTeam)
+            if(person){
+                newBlueTeam.push(person);
+                setBlueTeam(newBlueTeam);
+                await delay(1000);
+            }
+        }
+
+        personRequired = 2 - newRedTeam.length;
+        for(var i =0; i< personRequired; i++){
+            let person = drawSomeone(newBlueTeam , newRedTeam)
+            if(person){
+                newRedTeam.push(person);
+                setRedTeam(newRedTeam);
+                await delay(1000);
+            }
+        }
+        
+        //round two
+        personRequired = 3 - newBlueTeam.length;
+        for(var i =0; i< personRequired; i++){
+            let person = drawSomeone(newBlueTeam , newRedTeam)
+            if(person){
+                newBlueTeam.push(person);
+                setBlueTeam(newBlueTeam);
+                await delay(1000);
+            }
+        }
+
+        personRequired = 4 - newRedTeam.length;
+        for(var i =0; i< personRequired; i++){
+            let person = drawSomeone(newBlueTeam , newRedTeam)
+            if(person){
+                newRedTeam.push(person);
+                setRedTeam(newRedTeam);
+                await delay(1000);
+            }
+        }
+
+        //round 3
+        personRequired = 5 - newBlueTeam.length;
+        for(var i =0; i< personRequired; i++){
+            let person = drawSomeone(newBlueTeam , newRedTeam)
+            if(person){
+                newBlueTeam.push(person);
+                setBlueTeam(newBlueTeam);
+                await delay(1000);
+            }
+        }
+
+        personRequired = 5 - newRedTeam.length;
+        for(var i =0; i< personRequired; i++){
+            let person = drawSomeone(newBlueTeam , newRedTeam)
+            if(person){
+                newRedTeam.push(person);
+                setRedTeam(newRedTeam);
+                await delay(1000);
+            }
+        }
+
+        let pool =  [...namePool].filter(el => !newBlueTeam.includes(el) && !newRedTeam.includes(el));
+        //setBlueTeam(newBlueTeam);
+        //setRedTeam(newRedTeam);
+        setNamePool(pool);
+      };
+
     function teamming(){
         let pool = [...namePool , ...blueTeam , ...redTeam]
         let newBlueTeam =[]
         let newRedTeam =[];
-        for(let i =0; i< Math.min( 5, Math.floor(pool.length /2)) ; i++){
+        let maxCount = Math.floor(pool.length /2);
+        for(let i =0; i< Math.min( 5, maxCount) ; i++){
             let randomNum = Math.floor(Math.random()*pool.length);
             let personToBlue = pool[randomNum];
             newBlueTeam.push(personToBlue);
             pool.splice(randomNum, 1);
             randomNum = Math.floor(Math.random()*pool.length);
             let personToRed = pool[randomNum];
-            newRedTeam .push(personToRed);
+            newRedTeam.push(personToRed);
             pool.splice(randomNum, 1);
         }
         setBlueTeam(newBlueTeam);
@@ -39,27 +114,35 @@ function App() {
         setNamePool(pool);
     }
 
-    function drawOneToBlue(){
-        let pool = [...namePool];
+    function drawSomeone(currentBlueTeam , currentRedTeam){
+        let pool = [...namePool].filter(el => !currentBlueTeam.includes(el) && !currentRedTeam.includes(el) );
         if(pool.length > 0){
-            let newBlueTeam =[];
             let randomNum = Math.floor(Math.random()*pool.length);
-            let personToBlue = pool[randomNum];
-            newBlueTeam.push(personToBlue);
-            pool.splice(randomNum, 1);
+            let person = pool[randomNum];
+            return person
+        }
+        return null;
+    }
+
+    function drawOneToBlue(){     
+        let person = drawSomeone(blueTeam , redTeam)
+        if(person){
+            let pool = [...namePool];
+            let newBlueTeam =[...blueTeam];
+            newBlueTeam.push(person);
+            pool.splice(pool.indexOf(person), 1);
             setBlueTeam(newBlueTeam);
-            setNamePool(pool);
+            setNamePool(pool);        
         }
     }
 
     function drawOneToRed(){
-        let pool = [...namePool];
-        if(pool.length > 0){
-            let newRedTeam =[];
-            let randomNum = Math.floor(Math.random()*pool.length);
-            let personToRed = pool[randomNum];
-            newRedTeam.push(personToRed);
-            pool.splice(randomNum, 1);
+        let person = drawSomeone(blueTeam , redTeam)
+        if(person){
+            let pool = [...namePool];
+            let newRedTeam =[...redTeam];
+            newRedTeam.push(person);
+            pool.splice(pool.indexOf(person), 1);
             setRedTeam(newRedTeam);
             setNamePool(pool);
         }
@@ -360,6 +443,7 @@ function App() {
             <button type="button" className="btn btn-primary m-2" onClick={teamming}>立即分隊</button>
             <button type="button" className="btn btn-info m-2" onClick={drawOneToBlue}>抽一人入藍隊</button>
             <button type="button" className="btn btn-info m-2" onClick={drawOneToRed}>抽一人入紅隊</button>
+            <button type="button" className="btn btn-info m-2" onClick={LOLmode}>LOL選人mode(not ready)</button>
         </React.Fragment>
     );
 }
