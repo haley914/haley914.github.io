@@ -20,6 +20,12 @@ function App() {
         setInputName(event.target.value);
     };
 
+    const reset = () =>{
+        setNamePool([...namePool,...blueTeam,...redTeam]);
+        setBlueTeam([]);
+        setRedTeam([]);
+    }
+
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
     const LOLmode = async () => {
@@ -27,11 +33,11 @@ function App() {
         let newRedTeam =[...redTeam];
         //round one
         let personRequired = 1 - newBlueTeam.length;
-        for(var i =0; i< personRequired; i++){
+        for (var i =0; i< personRequired; i++){
             let person = drawSomeone(newBlueTeam , newRedTeam)
             if(person){
                 newBlueTeam.push(person);
-                setBlueTeam(newBlueTeam);
+                setBlueTeam([...newBlueTeam]);
                 await delay(1000);
             }
         }
@@ -41,7 +47,7 @@ function App() {
             let person = drawSomeone(newBlueTeam , newRedTeam)
             if(person){
                 newRedTeam.push(person);
-                setRedTeam(newRedTeam);
+                setRedTeam([...newRedTeam]);
                 await delay(1000);
             }
         }
@@ -52,7 +58,7 @@ function App() {
             let person = drawSomeone(newBlueTeam , newRedTeam)
             if(person){
                 newBlueTeam.push(person);
-                setBlueTeam(newBlueTeam);
+                setBlueTeam([...newBlueTeam]);
                 await delay(1000);
             }
         }
@@ -62,7 +68,7 @@ function App() {
             let person = drawSomeone(newBlueTeam , newRedTeam)
             if(person){
                 newRedTeam.push(person);
-                setRedTeam(newRedTeam);
+                setRedTeam([...newRedTeam]);
                 await delay(1000);
             }
         }
@@ -73,7 +79,7 @@ function App() {
             let person = drawSomeone(newBlueTeam , newRedTeam)
             if(person){
                 newBlueTeam.push(person);
-                setBlueTeam(newBlueTeam);
+                setBlueTeam([...newBlueTeam]);
                 await delay(1000);
             }
         }
@@ -83,15 +89,10 @@ function App() {
             let person = drawSomeone(newBlueTeam , newRedTeam)
             if(person){
                 newRedTeam.push(person);
-                setRedTeam(newRedTeam);
+                setRedTeam([...newRedTeam]);
                 await delay(1000);
             }
         }
-
-        let pool =  [...namePool].filter(el => !newBlueTeam.includes(el) && !newRedTeam.includes(el));
-        //setBlueTeam(newBlueTeam);
-        //setRedTeam(newRedTeam);
-        setNamePool(pool);
       };
 
     function teamming(){
@@ -119,6 +120,8 @@ function App() {
         if(pool.length > 0){
             let randomNum = Math.floor(Math.random()*pool.length);
             let person = pool[randomNum];
+            pool.splice(randomNum, 1);
+            setNamePool([...pool]);
             return person
         }
         return null;
@@ -127,28 +130,22 @@ function App() {
     function drawOneToBlue(){     
         let person = drawSomeone(blueTeam , redTeam)
         if(person){
-            let pool = [...namePool];
             let newBlueTeam =[...blueTeam];
             newBlueTeam.push(person);
-            pool.splice(pool.indexOf(person), 1);
-            setBlueTeam(newBlueTeam);
-            setNamePool(pool);        
+            setBlueTeam(newBlueTeam);       
         }
     }
 
     function drawOneToRed(){
         let person = drawSomeone(blueTeam , redTeam)
         if(person){
-            let pool = [...namePool];
             let newRedTeam =[...redTeam];
             newRedTeam.push(person);
-            pool.splice(pool.indexOf(person), 1);
             setRedTeam(newRedTeam);
-            setNamePool(pool);
         }
     }
 
-    const grid = 8;
+    const grid = 10;
 
     const getItemStyle = (isDragging, draggableStyle) => ({
         // some basic styles to make the items look a bit nicer
@@ -443,7 +440,8 @@ function App() {
             <button type="button" className="btn btn-primary m-2" onClick={teamming}>立即分隊</button>
             <button type="button" className="btn btn-info m-2" onClick={drawOneToBlue}>抽一人入藍隊</button>
             <button type="button" className="btn btn-info m-2" onClick={drawOneToRed}>抽一人入紅隊</button>
-            <button type="button" className="btn btn-info m-2" onClick={LOLmode}>LOL選人mode(not ready)</button>
+            <button type="button" className="btn btn-info m-2" onClick={LOLmode}>LOL選人mode</button>
+            <button type="button" className="btn btn-secondary m-2" onClick={reset}>重置</button>
         </React.Fragment>
     );
 }
